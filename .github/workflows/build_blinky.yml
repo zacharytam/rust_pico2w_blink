@@ -1,0 +1,44 @@
+name: Build RP235x Blinky WiFi Example
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust nightly
+        uses: dtolnay/rust-toolchain@nightly
+        with:
+          components: rust-src, llvm-tools-preview
+          # The specific target for RP235x
+          targets: thumbv8m.main-none-eabihf
+
+      - name: Build the Blinky WiFi Example (Release)
+        # Navigate to the correct directory and run cargo build for the specific example
+        run: |
+          cd examples/rp235x
+          # We use -Z build-std here because we are targeting a bare-metal architecture
+          cargo build --release --target thumbv8m.main-none-eabihf --example blinky_wifi -Z build-std=core,alloc,compiler_builtins,unwind
+
+      - name: Convert ELF to UF2 format
+        # The RP2040 bootloader expects a .uf2 file format.
+        run: |
+          # The output path is relative to the workspace root due to 'cd examples/rp235x' in the previous step
+          arm-none-eabi-objcopy -O binary target/thumbv8m.main-none-eabihf/release/examples/blinky_wifi blinky_wifi.bin
+          
+          # Convert the .bin to .uf2 (requires 'elf2uf2-rs' tool installed on the runner)
+          # Note: GitHub runners have arm-none-eabi-objcopy but not always elf2uf2-rs.
+          # You might need an extra step to install elf2uf2-rs first if this fails.
+          # For a standard runner, you might need to install it first: 
+          # cargo install elf2uf2-rs
+
+          elf2uf2-rs -d blinky_wifi.bin target/blinky_wifi.uf2
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blinky_wifi-uf2-artifact
+          path: target/blinky_wifi.uf2
