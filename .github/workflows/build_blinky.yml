@@ -1,48 +1,47 @@
-name: Build Pico 2 W Rust Firmware
+name: Build UF2 Firmware
 
 on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
 
 jobs:
   build:
     runs-on: ubuntu-latest
 
     steps:
+      # 1️⃣  Check out your repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install system dependencies
-        run: sudo apt-get update && sudo apt-get install -y libudev-dev pkg-config
-
-      - name: Install Rust toolchain
+      # 2️⃣  Install stable Rust and required target
+      - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
-          toolchain: nightly
+          toolchain: stable
           target: thumbv8m.main-none-eabihf
           override: true
-          components: rust-src
 
-      - name: Install additional tools
+      # 3️⃣  Install the elf2uf2 converter (used to flash RP2040/RP2350)
+      - name: Install elf2uf2-rs
         run: |
-          rustup target add thumbv8m.main-none-eabihf
-          cargo install elf2uf2-rs --locked
+          sudo apt update
+          sudo apt install -y pkg-config libudev-dev
+          cargo install elf2uf2-rs
 
-      - name: Clean build folder
-        run: cargo clean
-
-      - name: Build firmware
+      # 4️⃣  Build the firmware
+      - name: Build firmware (release)
         run: cargo build --release --target thumbv8m.main-none-eabihf
 
+      # 5️⃣  Convert ELF → UF2
       - name: Convert ELF to UF2
         run: |
-          mkdir -p build
-          elf2uf2-rs target/thumbv8m.main-none-eabihf/release/rust_wifi_from_embassy build/rust_wifi_from_embassy.uf2
+          mkdir -p out
+          elf2uf2-rs target/thumbv8m.main-none-eabihf/release/embassy-rp2350-examples out/firmware.uf2
 
-      - name: Upload build artifacts
+      # 6️⃣  Upload result as workflow artifact
+      - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
-          name: rust_wifi_from_embassy
-          path: build/rust_wifi_from_embassy.uf2
+          name: pico2w_firmware
+          path: out/firmware.uf2
