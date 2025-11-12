@@ -12,7 +12,7 @@ embassy-embedded-hal = { git = "https://github.com/embassy-rs/embassy.git", bran
 embassy-sync          = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt"] }
 embassy-executor      = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["arch-cortex-m", "executor-thread", "executor-interrupt", "defmt"] }
 embassy-time          = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt", "defmt-timestamp-uptime"] }
-embassy-rp            = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt", "unstable-pac", "time-driver", "critical-section-impl", "_rp235x", "binary-info"] }
+embassy-rp            = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt", "unstable-pac", "time-driver", "critical-section-impl", "_rp235x", "binary-info", "rp235xa"] }
 embassy-usb           = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt"] }
 embassy-net           = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt", "icmp", "tcp", "udp", "raw", "dhcpv4", "medium-ethernet", "dns"] }
 embassy-net-wiznet    = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt"] }
