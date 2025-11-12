@@ -35,7 +35,7 @@ jobs:
       - name: Convert ELF to UF2
         run: |
           mkdir -p out
-          elf2uf2-rs target/thumbv8m.main-none-eabihf/release/embassy-rp2350-examples out/firmware.uf2
+          elf2uf2-rs target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.uf2
 
       # 6️⃣  Upload result as workflow artifact
       - name: Upload firmware artifact
