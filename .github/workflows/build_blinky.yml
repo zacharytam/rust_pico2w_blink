@@ -19,7 +19,6 @@ jobs:
       - name: Build the Blinky WiFi Example (Release)
         # Navigate to the correct directory and run cargo build for the specific example
         run: |
-          cd examples/rp235x
           # We use -Z build-std here because we are targeting a bare-metal architecture
           cargo build --release --target thumbv8m.main-none-eabihf --example blinky_wifi -Z build-std=core,alloc,compiler_builtins,unwind
 
