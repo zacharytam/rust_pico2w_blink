@@ -66,7 +66,6 @@ embedded-sdmmc = "0.7.0"
 debug = true
 
 [package.metadata.embassy]
-chip = "rp235xa"
 build = [
   { target = "thumbv8m.main-none-eabihf", artifact-dir = "out/examples/rp235x" }
 ]
