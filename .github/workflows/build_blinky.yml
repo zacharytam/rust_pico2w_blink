@@ -34,6 +34,7 @@ jobs:
       # 5️⃣  Convert ELF → UF2
       - name: Convert ELF to UF2
         run: |
+          cd $GITHUB_WORKSPACE
           mkdir -p out
           elf2uf2-rs target/thumbv8m.main-none-eabihf/release/embassy-rp2350-examples out/firmware.uf2
 
