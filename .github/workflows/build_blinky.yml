@@ -29,10 +29,7 @@ jobs:
 
       # 4️⃣  Build the firmware
       - name: Build firmware (release)
-        run: 
-          cargo clean
-          cargo build --release
-          # cargo build --release --target thumbv8m.main-none-eabihf
+        run: cargo build --release --target thumbv8m.main-none-eabihf
 
       # 5️⃣  Convert ELF → UF2
       - name: Convert ELF to UF2
