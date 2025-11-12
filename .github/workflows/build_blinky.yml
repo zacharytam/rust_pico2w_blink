@@ -1,4 +1,4 @@
-name: Build RP235x Blinky WiFi Example
+name: Build Pico 2 W Rust Firmware
 
 on:
   workflow_dispatch:
@@ -6,38 +6,37 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      - name: Install Rust nightly
-        uses: dtolnay/rust-toolchain@nightly
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
         with:
-          components: rust-src, llvm-tools-preview
-          # The specific target for RP235x
-          targets: thumbv8m.main-none-eabihf
+          toolchain: nightly
+          target: thumbv8m.main-none-eabihf
+          override: true
+          components: rust-src
 
-      - name: Build the Blinky WiFi Example (Release)
-        # Navigate to the correct directory and run cargo build for the specific example
+      - name: Install additional tools
         run: |
-          # We use -Z build-std here because we are targeting a bare-metal architecture
-          cargo build --release --target thumbv8m.main-none-eabihf --example blinky_wifi -Z build-std=core,alloc,compiler_builtins,unwind
+          rustup target add thumbv8m.main-none-eabihf
+          cargo install elf2uf2-rs --locked
 
-      - name: Convert ELF to UF2 format
-        # The RP2040 bootloader expects a .uf2 file format.
+      - name: Clean build folder
+        run: cargo clean
+
+      - name: Build firmware
+        run: cargo build --release --target thumbv8m.main-none-eabihf
+
+      - name: Convert ELF to UF2
         run: |
-          # The output path is relative to the workspace root due to 'cd examples/rp235x' in the previous step
-          arm-none-eabi-objcopy -O binary target/thumbv8m.main-none-eabihf/release/examples/blinky_wifi blinky_wifi.bin
-          
-          # Convert the .bin to .uf2 (requires 'elf2uf2-rs' tool installed on the runner)
-          # Note: GitHub runners have arm-none-eabi-objcopy but not always elf2uf2-rs.
-          # You might need an extra step to install elf2uf2-rs first if this fails.
-          # For a standard runner, you might need to install it first: 
-          # cargo install elf2uf2-rs
+          mkdir -p build
+          elf2uf2-rs target/thumbv8m.main-none-eabihf/release/rust_wifi_from_embassy build/rust_wifi_from_embassy.uf2
 
-          elf2uf2-rs -d blinky_wifi.bin target/blinky_wifi.uf2
-
-      - name: Upload Artifact
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: blinky_wifi-uf2-artifact
-          path: target/blinky_wifi.uf2
+          name: rust_wifi_from_embassy
+          path: build/rust_wifi_from_embassy.uf2
