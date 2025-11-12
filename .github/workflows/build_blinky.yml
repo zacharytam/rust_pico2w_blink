@@ -1,9 +1,7 @@
 name: Build UF2 Firmware
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
