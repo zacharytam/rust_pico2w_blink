@@ -8,4 +8,6 @@ target = "thumbv8m.main-none-eabihf"
 
 [env]
 DEFMT_LOG = "debug"
-EMBASSY_RP_LINKER_SCRIPT = "rp235x"
+
+[target.thumbv8m.main-none-eabihf]
+rustflags = ["-C", "link-arg=-Tlink_rp235x.x",]
