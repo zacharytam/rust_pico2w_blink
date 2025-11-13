@@ -54,15 +54,21 @@ jobs:
       - name: Build firmware (release)
         run: cargo build --release --target thumbv8m.main-none-eabihf
 
-      # 6️⃣ Convert ELF → UF2
+      # 6️⃣ Create out directory and copy ELF
+      - name: Prepare ELF
+        run: |
+          mkdir -p out
+          mov target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.elf
+
+      # 7️⃣ Convert ELF → UF2
       - name: Convert ELF to UF2
         run: |
           mkdir -p out
-          picotool uf2 convert target/thumbv8m.main-none-eabihf/release/blinky_wifi \
+          picotool uf2 convert out/firmware.elf \
             out/firmware.uf2 \
             --abs-block 0x10010000 --family 0xE48BFF57 --offset 0x10000000
 
-      # 7️⃣ Upload UF2 artifact
+      # 8️⃣ Upload UF2 artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
