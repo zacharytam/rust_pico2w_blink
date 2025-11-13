@@ -8,11 +8,11 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout the repository
+      # 1️⃣ Check out your repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Set up Rust & target
+      # 2️⃣ Set up Rust
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -20,66 +20,41 @@ jobs:
           target: thumbv8m.main-none-eabihf
           override: true
 
-      # 3️⃣ Cache Cargo dependencies
-      - name: Cache Cargo
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cargo/registry
-            ~/.cargo/git
-            target
-          key: cargo-cache-${{ hashFiles('**/Cargo.lock') }}
-          restore-keys: |
-            cargo-cache-
-
-      # 4️⃣ Install build tools
+      # 3️⃣ Install build dependencies
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake gcc-arm-none-eabi libusb-1.0-0-dev git
+          sudo apt install -y cmake gcc-arm-none-eabi libusb-1.0-0-dev git build-essential pkg-config
 
-      # 5️⃣ Cache Pico SDK
-      - name: Cache Pico SDK
-        uses: actions/cache@v3
-        with:
-          path: pico-sdk
-          key: pico-sdk-cache-v1
-
-      # 6️⃣ Cache picotool build
-      - name: Cache picotool
+      # 4️⃣ Build picotool (cache it)
+      - name: Build picotool
         uses: actions/cache@v3
         with:
           path: picotool/build
-          key: picotool-cache-v1
-
-      # 7️⃣ Build the firmware
-      - name: Build firmware (release)
-        run: cargo build --release --target thumbv8m.main-none-eabihf
-
-      # 8️⃣ Build picotool if not cached
-      - name: Build picotool
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
+          key: picotool-build
+          restore-keys: picotool-build
+      - run: |
           git clone https://github.com/raspberrypi/picotool.git
           cd picotool
-          git submodule update --init
-          mkdir build && cd build
-          cmake .. -DPICO_SDK_PATH=../pico-sdk
+          git submodule update --init --recursive
+          mkdir -p build && cd build
+          cmake ..
           make -j$(nproc)
           sudo make install
 
-      # 9️⃣ Convert ELF → UF2
+      # 5️⃣ Build firmware
+      - name: Build firmware (release)
+        run: cargo build --release --target thumbv8m.main-none-eabihf
+
+      # 6️⃣ Convert ELF → UF2
       - name: Convert ELF to UF2
         run: |
           mkdir -p out
-          picotool uf2 convert \
-            target/thumbv8m.main-none-eabihf/release/blinky_wifi \
+          picotool uf2 convert target/thumbv8m.main-none-eabihf/release/blinky_wifi \
             out/firmware.uf2 \
-            --abs-block 0x10010000 \
-            --family 0xE48BFF57 \
-            --offset 0x10000000
+            --abs-block 0x10010000 --family 0xE48BFF57 --offset 0x10000000
 
-      # 🔟 Upload firmware
+      # 7️⃣ Upload UF2 artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
