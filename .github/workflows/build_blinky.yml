@@ -33,11 +33,11 @@ jobs:
 
       # 5️⃣  Convert ELF → UF2
       - name: Convert ELF to UF2 (using picotool)
-  run: |
-    sudo apt install -y picotool
-    mkdir -p out
-    picotool uf2 convert target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.uf2 \
-      --abs-block 0x10010000 --family 0xE48BFF57 --offset 0x10000000
+        run: |
+          sudo apt install -y picotool
+          mkdir -p out
+          picotool uf2 convert target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.uf2 \
+            --abs-block 0x10010000 --family 0xE48BFF57 --offset 0x10000000
 
       # 6️⃣  Upload result as workflow artifact
       - name: Upload firmware artifact
