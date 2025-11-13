@@ -58,7 +58,7 @@ jobs:
       - name: Prepare ELF
         run: |
           mkdir -p out
-          mov target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.elf
+          cp target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.elf
 
       # 7️⃣ Convert ELF → UF2
       - name: Convert ELF to UF2
