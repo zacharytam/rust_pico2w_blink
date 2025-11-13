@@ -34,11 +34,19 @@ jobs:
           key: picotool-build
           restore-keys: picotool-build
       - run: |
+          git clone https://github.com/raspberrypi/pico-sdk.git
           git clone https://github.com/raspberrypi/picotool.git
+          
+          # Initialize SDK submodules
+          cd pico-sdk
+          git submodule update --init
+          cd ..
+          
+          # Build picotool with SDK path
           cd picotool
           git submodule update --init --recursive
           mkdir -p build && cd build
-          cmake ..
+          cmake .. -DPICO_SDK_PATH=../../pico-sdk
           make -j$(nproc)
           sudo make install
 
