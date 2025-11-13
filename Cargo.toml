@@ -38,6 +38,7 @@ assign-resources = { git = "https://github.com/adamgreig/assign-resources", rev 
 # for TB6612FNG example
 tb6612fng = "1.0.0"
 
+#cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
 cortex-m = { version = "0.7.6", features = ["inline-asm"] }
 cortex-m-rt = "0.7.0"
 critical-section = "1.1"
@@ -56,7 +57,7 @@ embedded-hal-async = "1.0"
 embedded-hal-bus = { version = "0.1", features = ["async"] }
 embedded-io-async = { version = "0.6.1", features = ["defmt-03"] }
 embedded-storage = { version = "0.3" }
-static_cell = "2.1.0"
+static_cell = "2.1"
 portable-atomic = { version = "1.5", features = ["critical-section"] }
 log = "0.4"
 embedded-sdmmc = "0.7.0"
