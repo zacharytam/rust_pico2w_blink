@@ -11,7 +11,7 @@ publish = false
 embassy-embedded-hal = { git = "https://github.com/embassy-rs/embassy.git", rev = "abc8e450f936567ad42cb34b5d2a7941b206aa5d", features = ["defmt"] } # version = "0.5.0"
 embassy-sync          = { git = "https://github.com/embassy-rs/embassy.git", rev = "abc8e450f936567ad42cb34b5d2a7941b206aa5d", features = ["defmt"] } # version = "0.7.2"
 embassy-executor      = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["arch-cortex-m", "executor-thread", "executor-interrupt", "defmt"] } # version = "0.9.0"
-embassy-time          = { git = "https://github.com/embassy-rs/embassy.git", rev = "a6a38cdd22cb2f47f3cc869f447d7cdb80e27ec6", features = ["defmt", "defmt-timestamp-uptime"] } # version = "0.5.0"
+embassy-time          = { git = "https://github.com/embassy-rs/embassy.git", rev = "e01c712d2b5adb2799809bc96093eecc79105fee", features = ["defmt", "defmt-timestamp-uptime"] } # version = "0.5.0"
 embassy-rp            = { git = "https://github.com/embassy-rs/embassy.git", rev = "a6a38cdd22cb2f47f3cc869f447d7cdb80e27ec6", features = ["defmt", "unstable-pac", "time-driver", "critical-section-impl", "rp235xa", "binary-info"] } # version = "0.8.0"
 embassy-usb           = { git = "https://github.com/embassy-rs/embassy.git", rev = "a6a38cdd22cb2f47f3cc869f447d7cdb80e27ec6", features = ["defmt"] } # version = "0.5.1"
 embassy-net           = { git = "https://github.com/embassy-rs/embassy.git", rev = "a6a38cdd22cb2f47f3cc869f447d7cdb80e27ec6", features = ["defmt", "icmp", "tcp", "udp", "raw", "dhcpv4", "medium-ethernet", "dns"] } # version = "0.7.1"
