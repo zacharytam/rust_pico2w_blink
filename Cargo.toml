@@ -16,7 +16,7 @@ embassy-rp            = { git = "https://github.com/embassy-rs/embassy.git", rev
 embassy-usb           = { git = "https://github.com/embassy-rs/embassy.git", rev = "a6a38cdd22cb2f47f3cc869f447d7cdb80e27ec6", features = ["defmt"] } # version = "0.5.1"
 embassy-net           = { git = "https://github.com/embassy-rs/embassy.git", rev = "a6a38cdd22cb2f47f3cc869f447d7cdb80e27ec6", features = ["defmt", "icmp", "tcp", "udp", "raw", "dhcpv4", "medium-ethernet", "dns"] } # version = "0.7.1"
 embassy-net-wiznet    = { git = "https://github.com/embassy-rs/embassy.git", rev = "a6a38cdd22cb2f47f3cc869f447d7cdb80e27ec6", features = ["defmt"] } # version = "0.2.1"
-embassy-futures       = { git = "https://github.com/embassy-rs/embassy.git", branch = "main" }
+embassy-futures       = { git = "https://github.com/embassy-rs/embassy.git", rev = "e01c712d2b5adb2799809bc96093eecc79105fee" } # version = "0.1.2"
 embassy-usb-logger    = { git = "https://github.com/embassy-rs/embassy.git", branch = "main" }
 
 # CYW43 Wi-Fi + PIO driver
