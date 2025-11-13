@@ -8,27 +8,33 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣  Check out your repo
+      # 1️⃣ Checkout your repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣  Install stable Rust and required target
+      # 2️⃣ Install Rust toolchain
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
           target: thumbv8m.main-none-eabihf
           override: true
-          
-      # 3️⃣ Install build dependencies and build picotool
+
+      # 3️⃣ Install dependencies and build picotool (with Pico SDK)
       - name: Build and install picotool
         run: |
           sudo apt update
           sudo apt install -y cmake gcc-arm-none-eabi libusb-1.0-0-dev git
+          
+          # Clone Pico SDK and set environment variable
+          git clone https://github.com/raspberrypi/pico-sdk.git
+          export PICO_SDK_PATH=$PWD/pico-sdk
+          
+          # Clone and build picotool
           git clone https://github.com/raspberrypi/picotool.git
           cd picotool
           mkdir build && cd build
-          cmake ..
+          cmake .. -DPICO_SDK_PATH=$PICO_SDK_PATH
           make -j$(nproc)
           sudo make install
 
@@ -40,11 +46,14 @@ jobs:
       - name: Convert ELF to UF2
         run: |
           mkdir -p out
-          picotool uf2 convert target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.uf2 --abs-block 0x10010000 --family 0xE48BFF57 --offset 0x10000000
+          picotool uf2 convert target/thumbv8m.main-none-eabihf/release/blinky_wifi \
+            out/firmware.uf2 --abs-block 0x10010000 --family 0xE48BFF57 --offset 0x10000000
 
-      # 6️⃣ Upload result as workflow artifact
-      - name: Upload firmware artifact
+      # 6️⃣ Upload ELF + UF2 as artifacts
+      - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4
         with:
           name: pico2w_firmware
-          path: out/firmware.uf2
+          path: |
+            target/thumbv8m.main-none-eabihf/release/blinky_wifi
+            out/firmware.uf2
