@@ -1,4 +1,4 @@
-name: Build UF2 Firmware
+name: Build Pico Firmware + Picotool + UF2
 
 on:
   workflow_dispatch:
@@ -8,11 +8,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Checkout repository
+      # 1️⃣ Checkout repo
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # 2️⃣ Install stable Rust and required target
+      # 2️⃣ Install system dependencies
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y \
+            cmake gcc-arm-none-eabi libusb-1.0-0-dev git pkg-config libudev-dev build-essential
+
+      # 3️⃣ Setup Rust toolchain
       - name: Set up Rust
         uses: actions-rs/toolchain@v1
         with:
@@ -20,45 +27,47 @@ jobs:
           target: thumbv8m.main-none-eabihf
           override: true
 
-      # 3️⃣ Install dependencies for picotool
-      - name: Install build tools for picotool
+      # 4️⃣ Clone and build Pico SDK and Picotool manually
+      - name: Build picotool manually
         run: |
-          sudo apt update
-          sudo apt install -y cmake gcc-arm-none-eabi libusb-1.0-0-dev git build-essential
-
-      # 4️⃣ Build picotool
-      - name: Build picotool
-        run: |
+          # Clone SDK and picotool
+          git clone https://github.com/raspberrypi/pico-sdk.git
           git clone https://github.com/raspberrypi/picotool.git
+
+          # Initialize SDK submodules
+          cd pico-sdk
+          git submodule update --init
+          cd ..
+
+          # Build picotool with SDK path
           cd picotool
           mkdir build && cd build
-          cmake ..
+          cmake .. -DPICO_SDK_PATH=../../pico-sdk
           make -j$(nproc)
           sudo make install
+          cd ../..
 
-      # 5️⃣ Build the firmware ELF
+      # 5️⃣ Build your Rust firmware
       - name: Build firmware (release)
         run: cargo build --release --target thumbv8m.main-none-eabihf
 
-      # 6️⃣ Rename ELF for picotool
-      - name: Prepare ELF file
+      # 6️⃣ Create out directory and copy ELF
+      - name: Prepare ELF
         run: |
           mkdir -p out
-          cp target/thumbv8m.main-none-eabihf/release/blinky_wifi target/thumbv8m.main-none-eabihf/release/blinky_wifi.elf
+          cp target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.elf
 
-      # 7️⃣ Convert ELF → UF2
+      # 7️⃣ Convert ELF → UF2 using picotool
       - name: Convert ELF to UF2
         run: |
-          picotool uf2 convert \
-            target/thumbv8m.main-none-eabihf/release/blinky_wifi.elf \
-            out/firmware.uf2 \
-            --abs-block 0x10010000 \
+          picotool uf2 convert out/firmware.elf out/firmware.uf2 \
             --family 0xE48BFF57 \
-            --offset 0x10000000
+            --offset 0x10000000 \
+            --abs-block 0x10010000
 
-      # 8️⃣ Upload UF2 as workflow artifact
-      - name: Upload firmware artifact
+      # 8️⃣ Upload both ELF and UF2 artifacts
+      - name: Upload firmware artifacts
         uses: actions/upload-artifact@v4
         with:
           name: pico2w_firmware
-          path: out/firmware.uf2
+          path: out/
