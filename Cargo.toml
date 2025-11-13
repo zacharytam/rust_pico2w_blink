@@ -21,7 +21,7 @@ embassy-usb-logger    = { git = "https://github.com/embassy-rs/embassy.git", rev
 
 # CYW43 Wi-Fi + PIO driver
 cyw43     = { git = "https://github.com/embassy-rs/embassy.git", rev = "e01c712d2b5adb2799809bc96093eecc79105fee", features = ["defmt", "firmware-logs"] } # version = "0.5.0"
-cyw43-pio = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", package = "cyw43-pio", features = ["defmt"] }
+cyw43-pio = { git = "https://github.com/embassy-rs/embassy.git", rev = "e01c712d2b5adb2799809bc96093eecc79105fee", package = "cyw43-pio", features = ["defmt"] } # version = "0.8.0"
 
 # Other dependencies
 defmt = "1.0.1"
