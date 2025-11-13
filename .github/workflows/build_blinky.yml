@@ -24,7 +24,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake gcc-arm-none-eabi libusb-1.0-0-dev git build-essential pkg-config
+          sudo apt install -y cmake gcc-arm-none-eabi libusb-1.0-0-dev git build-essential libudev-dev pkg-config
 
       # 4️⃣ Build picotool (cache it)
       - name: Build picotool
