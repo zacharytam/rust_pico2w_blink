@@ -8,7 +8,7 @@ publish = false
 
 [dependencies]
 # Embassy crates pulled directly from GitHub instead of local ../../ paths
-embassy-embedded-hal = { git = "https://github.com/embassy-rs/embassy.git", rev = "abc8e450f936567ad42cb34b5d2a7941b206aa5d", features = ["defmt"] }
+embassy-embedded-hal = { git = "https://github.com/embassy-rs/embassy.git", rev = "abc8e450f936567ad42cb34b5d2a7941b206aa5d", features = ["defmt"] } # version = "0.5.0"
 embassy-sync          = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt"] }
 embassy-executor      = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["arch-cortex-m", "executor-thread", "executor-interrupt", "defmt"] }
 embassy-time          = { git = "https://github.com/embassy-rs/embassy.git", branch = "main", features = ["defmt", "defmt-timestamp-uptime"] }
