@@ -1,27 +1,72 @@
 [package]
-name = "pico2w-pure-rust"
-version = "0.1.0"
 edition = "2024"
+name = "embassy-rp2350-examples"
+version = "0.1.0"
+license = "MIT OR Apache-2.0"
+
+publish = false
 
 [dependencies]
-# RP2350 HAL
-rp235x-hal = { version = "0.3", features = ["cyw43"] }
+# Embassy crates pulled directly from GitHub instead of local ../../ paths
+embassy-embedded-hal = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt"] } # version = "0.5.0"
+embassy-sync          = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt"] } # version = "0.7.2"
+embassy-executor      = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["arch-cortex-m", "executor-thread", "executor-interrupt", "defmt"] } # version = "0.9.0"
+embassy-time          = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt", "defmt-timestamp-uptime"] } # version = "0.5.0"
+embassy-rp            = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt", "unstable-pac", "time-driver", "critical-section-impl", "rp235xa", "binary-info"] } # version = "0.8.0"
+embassy-usb           = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt"] } # version = "0.5.1"
+embassy-net           = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt", "icmp", "tcp", "udp", "raw", "dhcpv4", "medium-ethernet", "dns"] } # version = "0.7.1"
+embassy-net-wiznet    = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt"] } # version = "0.2.1"
+embassy-futures       = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db" } # version = "0.1.2"
+embassy-usb-logger    = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db" } # version = "0.5.1"
 
-# CYW43 firmware helper
-cyw43 = "0.5.0" 
+# CYW43 Wi-Fi + PIO driver
+cyw43     = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt", "firmware-logs"] } # version = "0.5.0"
+cyw43-pio = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", package = "cyw43-pio", features = ["defmt"] } # version = "0.8.0"
 
-# Cortex-M runtime + panic handler
-cortex-m = { version = "0.7", features = ["inline-asm"] }
-cortex-m-rt = "0.7.0"
-panic-halt = "0.2.0"
-
-# Optional logging for debug
+# Other dependencies
 defmt = "1.0.1"
 defmt-rtt = "1.0.0"
+fixed = "1.23.1"
+fixed-macro = "1.2"
 
-# PIO assembler
-pio-proc = "0.3.0"
-pio = "0.3.0"
+serde = { version = "1.0.203", default-features = false, features = ["derive"] }
+serde-json-core = "0.5.1"
 
-# Utilities
+# for assign resources example
+assign-resources = { git = "https://github.com/adamgreig/assign-resources", rev = "bd22cb7a92031fb16f74a5da42469d466c33383e" }
+
+# for TB6612FNG example
+tb6612fng = "1.0.0"
+
+#cortex-m = { version = "0.7.6", features = ["critical-section-single-core"] }
+cortex-m = { version = "0.7.6", features = ["inline-asm"] }
+cortex-m-rt = "0.7.0"
+critical-section = "1.1"
+panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+display-interface-spi = "0.5.0"
+embedded-graphics = "0.8.1"
+mipidsi = "0.8.0"
+display-interface = "0.5.0"
+byte-slice-cast = { version = "1.2.0", default-features = false }
+smart-leds = "0.3.0"
+heapless = "0.8"
+usbd-hid = "0.8.1"
+
+embedded-hal-1 = { package = "embedded-hal", version = "1.0" }
+embedded-hal-async = "1.0"
+embedded-hal-bus = { version = "0.1", features = ["async"] }
+embedded-io-async = { version = "0.6.1", features = ["defmt-03"] }
+embedded-storage = { version = "0.3" }
 static_cell = "2.1"
+portable-atomic = { version = "1.5", features = ["critical-section"] }
+log = "0.4"
+embedded-sdmmc = "0.7.0"
+
+[profile.release]
+# Enable generation of debug symbols even on release builds
+debug = true
+
+[package.metadata.embassy]
+build = [
+  { target = "thumbv8m.main-none-eabihf", artifact-dir = "out/examples/rp235x" }
+]
