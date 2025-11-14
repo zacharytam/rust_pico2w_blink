@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-rp235x-hal = { version = "0.3.0", features = ["rp235x"] }
+rp235x-hal = { version = "0.3.0" }
 rp-pac = { version = "7.0.0", features = ["rp235x"] }
 cortex-m = "0.7"          # CPU intrinsics, asm
 cortex-m-rt = "0.7"       # #[entry] attribute
