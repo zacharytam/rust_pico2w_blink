@@ -4,13 +4,14 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-cortex-m = "0.7"
+rp235x-hal = { version = "0.3", features = ["cyw43"] }
+cyw43-pio = "0.2"
+cortex-m = "0.8"
 cortex-m-rt = "0.7"
-
-rp235x-hal = { version = "0.3", features = ["rt", "cyw43"] }
-
 panic-halt = "0.2"
+embedded-hal = "1.0.0-alpha.7"
+nb = "1.0"
 
 [profile.release]
-opt-level = "z"
 lto = true
+codegen-units = 1
