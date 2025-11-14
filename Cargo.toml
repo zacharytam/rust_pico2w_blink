@@ -10,6 +10,18 @@ cortex-m = "0.7"          # CPU intrinsics, asm
 cortex-m-rt = "0.7"       # #[entry] attribute
 panic-halt = "0.2"        # panic handler
 pio-proc = "0.3"          # pio_proc macros
+embassy-embedded-hal = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt"] } # version = "0.5.0"
+embassy-sync          = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt"] } # version = "0.7.2"
+embassy-executor      = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["arch-cortex-m", "executor-thread", "executor-interrupt", "defmt"] } # version = "0.9.0"
+embassy-time          = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt", "defmt-timestamp-uptime"] } # version = "0.5.0"
+embassy-rp            = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt", "unstable-pac", "time-driver", "critical-section-impl", "rp235xa", "binary-info"] } # version = "0.8.0"
+embassy-usb           = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt"] } # version = "0.5.1"
+embassy-net           = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt", "icmp", "tcp", "udp", "raw", "dhcpv4", "medium-ethernet", "dns"] } # version = "0.7.1"
+embassy-net-wiznet    = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt"] } # version = "0.2.1"
+embassy-futures       = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db" } # version = "0.1.2"
+embassy-usb-logger    = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db" } # version = "0.5.1"
+
+# CYW43 Wi-Fi + PIO driver
 cyw43     = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["defmt", "firmware-logs"] } # version = "0.5.0"
 cyw43-pio = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", package = "cyw43-pio", features = ["defmt"] } # version = "0.8.0"
 
