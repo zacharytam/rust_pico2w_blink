@@ -24,4 +24,4 @@ pio-proc = "0.3.0"
 pio = "0.3.0"
 
 # Utilities
-static-cell = "2.1"
+static_cell = "2.1"
