@@ -77,7 +77,7 @@ jobs:
       # 🔟 Convert ELF → UF2
       - name: Convert ELF to UF2
         run: |
-          picotool uf2 convert out/firmware.elf \
+          ./picotool/build/picotool uf2 convert out/firmware.elf \
             out/firmware.uf2 \
             --abs-block 0x10010000 --family 0xE48BFF57 --offset 0x10000000
 
