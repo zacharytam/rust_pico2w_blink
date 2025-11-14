@@ -1,20 +1,14 @@
 [package]
-name = "pico2w-pio-blink"
+name = "pico2w-cyw43-blink"
 version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-# Cortex-M runtime and intrinsics
 cortex-m = "0.7"
 cortex-m-rt = "0.7"
 
-# RP2350 HAL
-rp235x-hal = { version = "0.3", features = ["rt"] }
+rp235x-hal = { version = "0.3", features = ["rt", "cyw43"] }
 
-# PIO assembler macro
-pio-proc = "0.2"
-
-# Panic handler
 panic-halt = "0.2"
 
 [profile.release]
