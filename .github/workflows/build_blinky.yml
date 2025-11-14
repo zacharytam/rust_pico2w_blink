@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1️⃣ Check out your repo
+      # 1️⃣ Checkout repository
       - name: Checkout repository
         uses: actions/checkout@v4
 
@@ -24,59 +24,64 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake gcc-arm-none-eabi libusb-1.0-0-dev git build-essential libudev-dev pkg-config
+          sudo apt install -y cmake gcc-arm-none-eabi libusb-1.0-0-dev git build-essential libudev-dev pkg-config unzip wget
 
-      # 4️⃣ Restore picotool cache
-      - name: Restore picotool cache
+      # 4️⃣ Cache pico-sdk
+      - name: Cache pico-sdk
+        id: cache-pico-sdk
+        uses: actions/cache@v3
+        with:
+          path: pico-sdk
+          key: pico-sdk
+
+      # 5️⃣ Download pico-sdk if cache missed
+      - name: Download pico-sdk
+        if: steps.cache-pico-sdk.outputs.cache-hit != 'true'
+        run: |
+          wget https://github.com/raspberrypi/pico-sdk/archive/a1438dff1d38bd9c65dbd693f0e5db4b9ae91779.zip -O pico-sdk.zip
+          unzip pico-sdk.zip
+          mv pico-sdk-a1438dff1d38bd9c65dbd693f0e5db4b9ae91779 pico-sdk
+          cd pico-sdk
+          git submodule update --init --recursive || true
+
+      # 6️⃣ Cache picotool build
+      - name: Cache picotool
+        id: cache-picotool
         uses: actions/cache@v3
         with:
           path: picotool/build
           key: picotool-build
 
-      # 5️⃣ Build picotool if not cached
+      # 7️⃣ Build picotool if cache missed
       - name: Build picotool
+        if: steps.cache-picotool.outputs.cache-hit != 'true'
         run: |
-          if [ ! -d picotool/build ]; then
-            # Clean old clones if any
-            rm -rf pico-sdk picotool
+          git clone https://github.com/raspberrypi/picotool.git
+          cd picotool
+          git submodule update --init --recursive
+          mkdir -p build && cd build
+          cmake .. -DPICO_SDK_PATH=../../pico-sdk
+          make -j$(nproc)
+          sudo make install
 
-            # Clone SDK and picotool
-            git clone https://github.com/raspberrypi/pico-sdk.git
-            git clone https://github.com/raspberrypi/picotool.git
-
-            # Initialize SDK submodules
-            cd pico-sdk
-            git submodule update --init
-            cd ..
-
-            # Build picotool with SDK path
-            cd picotool
-            git submodule update --init --recursive
-            mkdir -p build && cd build
-            cmake .. -DPICO_SDK_PATH=../../pico-sdk
-            make -j$(nproc)
-            sudo make install
-          fi
-
-      # 6️⃣ Build firmware
+      # 8️⃣ Build firmware
       - name: Build firmware (release)
         run: cargo build --release --target thumbv8m.main-none-eabihf
 
-      # 7️⃣ Create out directory and copy ELF
+      # 9️⃣ Prepare ELF
       - name: Prepare ELF
         run: |
           mkdir -p out
           cp target/thumbv8m.main-none-eabihf/release/blinky_wifi out/firmware.elf
 
-      # 8️⃣ Convert ELF → UF2
+      # 🔟 Convert ELF → UF2
       - name: Convert ELF to UF2
         run: |
-          mkdir -p out
-          ./picotool/build/picotool uf2 convert out/firmware.elf \
+          picotool uf2 convert out/firmware.elf \
             out/firmware.uf2 \
             --abs-block 0x10010000 --family 0xE48BFF57 --offset 0x10000000
 
-      # 9️⃣ Upload UF2 artifact
+      # 1️⃣1️⃣ Upload UF2 artifact
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
