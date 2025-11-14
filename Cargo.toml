@@ -1,17 +1,23 @@
 [package]
-name = "pico2w-cyw43-blink"
+name = "pico2w-pure-rust"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 
 [dependencies]
-rp235x-hal = { version = "0.3", features = ["cyw43"] }
-cyw43-pio = "0.2"
-cortex-m = "0.7"        # <- must match hal
-cortex-m-rt = "0.7"     # <- must match hal
+# Embassy Git dependencies for RP2350 + CYW43 hardware support only
+embassy-rp = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["rp235xa", "binary-info"] }
+cyw43     = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", features = ["firmware-logs"] }
+cyw43-pio = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d887529c66d8d1b4c7b56849e7a95386d79db", package = "cyw43-pio" }
+
+# Panic handler
 panic-halt = "0.2"
-embedded-hal = "1.0.0-alpha.7"
-nb = "1.0"
+
+# Optional: defmt for logging (works with CYW43 firmware logging)
+defmt = "1.0"
+defmt-rtt = "1.0"
+
+[build]
+target = "thumbv8m.main-none-eabihf"
 
 [profile.release]
-lto = true
-codegen-units = 1
+debug = true
