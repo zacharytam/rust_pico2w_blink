@@ -52,17 +52,18 @@ jobs:
           path: picotool/build
           key: picotool-build
 
-      # 7️⃣ Build picotool if cache missed
-      - name: Build picotool
+      # 7️⃣ Download and build picotool if cache missed
+      - name: Download & Build picotool
         if: steps.cache-picotool.outputs.cache-hit != 'true'
         run: |
-          git clone https://github.com/raspberrypi/picotool.git
+          wget https://github.com/raspberrypi/picotool/archive/25aa087b2c517b4901874a99536e869d4d27b678.zip -O picotool.zip
+          unzip picotool.zip
+          mv picotool-25aa087b2c517b4901874a99536e869d4d27b678 picotool
           cd picotool
           git submodule update --init --recursive
           mkdir -p build && cd build
           cmake .. -DPICO_SDK_PATH=../../pico-sdk
           make -j$(nproc)
-          sudo make install
 
       # 8️⃣ Build firmware
       - name: Build firmware (release)
