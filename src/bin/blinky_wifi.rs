@@ -13,7 +13,7 @@ use rp_pico::hal::{
 use panic_halt as _;
 
 #[entry]
-fn main() -> ! {
+fn blink() -> ! {
     let mut pac = pac::Peripherals::take().unwrap();
 
     // Initialize clocks
