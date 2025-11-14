@@ -13,8 +13,8 @@ cyw43 = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d8875", f
 cyw43-pio = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d8875" }
 
 # Optional: defmt for logging (works with CYW43 firmware logging)
-defmt = "1.0"
-defmt-rtt = "1.0"
+# defmt = "1.0"
+# defmt-rtt = "1.0"
 
 [build]
 target = "thumbv8m.main-none-eabihf"
