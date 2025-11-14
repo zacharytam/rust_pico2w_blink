@@ -1,8 +1,7 @@
 #![no_std]
 #![no_main]
 
-use cortex_m_rt::entry;
-use embassy_rp::hal::{
+use rp235x_hal::{
     pac,
     gpio::{Pins, Level, Output},
     pio::{PIO, PIOBuilder, SM0},
@@ -10,6 +9,9 @@ use embassy_rp::hal::{
     clocks::init_clocks_and_plls,
     watchdog::Watchdog,
 };
+use cortex_m_rt::entry;
+use cortex_m;
+use pio_proc::pio_asm;
 use panic_halt as _;
 
 use cyw43_pio::{PioSpi, RM2_CLOCK_DIVIDER};
