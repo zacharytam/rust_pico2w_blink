@@ -12,9 +12,6 @@ pio-proc = "0.3"          # pio_proc macros
 cyw43 = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d8875", features = ["firmware-logs"] }
 cyw43-pio = { git = "https://github.com/embassy-rs/embassy.git", rev = "286d8875" }
 
-# Panic handler
-panic-halt = "0.2"
-
 # Optional: defmt for logging (works with CYW43 firmware logging)
 defmt = "1.0"
 defmt-rtt = "1.0"
