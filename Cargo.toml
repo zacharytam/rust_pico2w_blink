@@ -1,5 +1,5 @@
 [package]
-name = "rp2350-pio-blink"
+name = "pico2w-pio-blink"
 version = "0.1.0"
 edition = "2021"
 
@@ -11,7 +11,7 @@ cortex-m-rt = "0.7"
 # RP2350 HAL
 rp235x-hal = { version = "0.3", features = ["rt"] }
 
-# PIO assembler macro for RP2350 (same crate works)
+# PIO assembler macro
 pio-proc = "0.2"
 
 # Panic handler
