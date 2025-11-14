@@ -2,23 +2,27 @@
 #![no_main]
 
 use cortex_m_rt::entry;
-use rp_pico::hal::{
-    self,
-    pac,
-    gpio::Pins,
-    pio::{PIOBuilder, SM0, PIO},
-    clocks::init_clocks_and_plls,
-    sio::Sio,
-};
 use panic_halt as _;
 
+use rp235x_hal::{
+    pac,
+    clocks::init_clocks_and_plls,
+    sio::Sio,
+    watchdog::Watchdog,
+    cyw43::{Cyw43, PowerMode},
+};
+
 #[entry]
-fn blink() -> ! {
+fn main() -> ! {
+    // -------------------------------
+    // Take RP2350 peripherals
+    // -------------------------------
     let mut pac = pac::Peripherals::take().unwrap();
 
-    // Initialize clocks
-    let mut watchdog = hal::Watchdog::new(pac.WATCHDOG);
-    let clocks = init_clocks_and_plls(
+    let mut watchdog = Watchdog::new(pac.WATCHDOG);
+
+    // Default 12 MHz crystal on Pico 2 W
+    let _clocks = init_clocks_and_plls(
         12_000_000,
         pac.XOSC,
         pac.CLOCKS,
@@ -29,37 +33,31 @@ fn blink() -> ! {
     ).ok().unwrap();
 
     let sio = Sio::new(pac.SIO);
-    let pins = Pins::new(
-        pac.IO_BANK0,
-        pac.PADS_BANK0,
-        sio.gpio_bank0,
-        &mut pac.RESETS,
-    );
 
-    // Use GPIO 25 (onboard LED)
-    let led = pins.gpio25.into_push_pull_output();
+    // -------------------------------
+    // Initialize CYW43 WiFi/LED chip
+    // -------------------------------
+    let mut cyw43 = Cyw43::new(pac.PIO0, &mut pac.RESETS, sio.gpio_bank0)
+        .expect("CYW43 init failed");
 
-    // Use PIO0 and SM0
-    let (mut pio, sm0, _, _, _) = PIO::new(pac.PIO0, &mut pac.RESETS);
+    cyw43.set_power_mode(PowerMode::PowerSave).unwrap();
 
-    // Simple PIO program: toggle a pin
-    let program = pio_proc::pio_asm!(
-        ".wrap_target",
-        "set pins, 1",
-        "nop",
-        "set pins, 0",
-        "nop",
-        ".wrap"
-    );
-    let installed = pio.install(&program.program).unwrap();
-    let mut sm = PIOBuilder::from_program(installed)
-        .set_pins(led.id().num, 1)
-        .build(sm0);
-
-    sm.start();
-
-    // Loop forever (CPU can do other work)
+    // -------------------------------
+    // Blink onboard LED forever
+    // -------------------------------
     loop {
+        cyw43.gpio_set(0, true).unwrap();   // LED ON
+        delay_ms(500);
+
+        cyw43.gpio_set(0, false).unwrap();  // LED OFF
+        delay_ms(500);
+    }
+}
+
+/// crude busy-loop delay
+fn delay_ms(ms: u32) {
+    // ~120 MHz / 4 -> approx 30k cycles per iteration
+    for _ in 0..(ms * 30_000) {
         cortex_m::asm::nop();
     }
 }
